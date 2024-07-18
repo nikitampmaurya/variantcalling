@@ -32,7 +32,19 @@ samtools index Mapping/ERR5743893.sorted.bam #indexing bam file
 
 samtools faidx MN908947.fasta #indexing ref again to stores sequence names and their corresponding lengths.
 
+freebayes -f MN908947.fasta Mapping/ERR5743893.sorted.bam  > ERR5743893.vcf #used to perform variant calling on sequencing data
 
+bgzip ERR5743893.vcf #compress the file
+
+tabix ERR5743893.vcf.gz #for indexing the vcf file
+
+bcftools view -v snps ERR5743893.vcf.gz -o ERR5743893_snps.vcf #to extract snps
+
+bcftools view -v indels ERR5743893.vcf.gz -o ERR5743893_indels.vcf #to extract indels
+
+bcftools view -H ERR5743893_snps.vcf | wc -l #to count no of snps
+bcftools view -H ERR5743893_indels.vcf | wc -l #to count no of indels
+bcftools view -H ERR5743893.vcf.gz | wc -l #to count no of variants
 
 
 
