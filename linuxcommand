@@ -1,3 +1,5 @@
+#current directory: Desktop/Nikita/wellcome 
+
 conda env create -n MOOC --file MOOC.yml
 
 conda activate MOOC
@@ -6,3 +8,10 @@ unzip MOOC
 
 fastq-dump --split-files ERR5743893
 
+mkdir QC_Reports
+
+fastqc ERR5743893_1.fastq ERR5743893_2.fastq --outdir QC_Reports
+
+cd QC_Reports/
+
+multiqc .
