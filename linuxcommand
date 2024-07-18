@@ -18,19 +18,20 @@ multiqc . #to aggregates outputs of fastqc into a single report
 
 mkdir Mapping #create a new directory
 
-unzip MN908947.fasta.zipm
+unzip MN908947.fasta.zip 
 
-bwa index MN908947.fasta
+bwa index MN908947.fasta #indexing the ref genome
 
-samtools faidx MN908947.fasta
+bwa mem MN908947.fasta ERR5743893_1.fastq ERR5743893_2.fastq > Mapping/ERR5743893.sam #now algin ref to sample
 
-bwa mem MN908947.fasta ERR5743893_1.fastq ERR5743893_2.fastq > Mapping/ERR5743893.sam
+samtools view -@ 20 -S -b Mapping/ERR5743893.sam > Mapping/ERR5743893.bam #convert sam to bam
 
-samtools view -@ 20 -S -b Mapping/ERR5743893.sam > Mapping/ERR5743893.bam
+samtools sort -@ 8 -o Mapping/ERR5743893.sorted.bam Mapping/ERR5743893.bam #sort bam file by genomic coordinates
 
-samtools sort -@ 8 -o Mapping/ERR5743893.sorted.bam Mapping/ERR5743893.bam
+samtools index Mapping/ERR5743893.sorted.bam #indexing bam file
 
-samtools index Mapping/ERR5743893.sorted.bam
+samtools faidx MN908947.fasta #indexing ref again to stores sequence names and their corresponding lengths.
+
 
 
 
