@@ -1,17 +1,38 @@
 #current directory: Desktop/Nikita/wellcome 
 
-conda env create -n MOOC --file MOOC.yml
+conda env create -n MOOC --file MOOC.yml #creating a new environment according to the specification mentioned in MOOC
 
-conda activate MOOC
+conda activate MOOC #activating the environment 
 
-unzip MOOC
+unzip MOOC.yml #extract files in MOOC.yml
 
-fastq-dump --split-files ERR5743893
+fastq-dump --split-files ERR5743893 #download the samples
 
-mkdir QC_Reports
+mkdir QC_Reports #make a directory within wellcome directory
 
-fastqc ERR5743893_1.fastq ERR5743893_2.fastq --outdir QC_Reports
+fastqc ERR5743893_1.fastq ERR5743893_2.fastq --outdir QC_Reports #run fastqc on samples and store output in QC_Reports
 
-cd QC_Reports/
+cd QC_Reports/ #enter QC_Report directory
 
-multiqc .
+multiqc . #to aggregates outputs of fastqc into a single report
+
+mkdir Mapping #create a new directory
+
+unzip MN908947.fasta.zipm
+
+bwa index MN908947.fasta
+
+samtools faidx MN908947.fasta
+
+bwa mem MN908947.fasta ERR5743893_1.fastq ERR5743893_2.fastq > Mapping/ERR5743893.sam
+
+samtools view -@ 20 -S -b Mapping/ERR5743893.sam > Mapping/ERR5743893.bam
+
+samtools sort -@ 8 -o Mapping/ERR5743893.sorted.bam Mapping/ERR5743893.bam
+
+samtools index Mapping/ERR5743893.sorted.bam
+
+
+
+
+
