@@ -1,0 +1,8 @@
+conda env create -n MOOC --file MOOC.yml
+
+conda activate MOOC
+
+gunzip MOOC
+
+fastq-dump --split-files ERR5743893
+
