@@ -46,6 +46,12 @@ bcftools view -H ERR5743893_snps.vcf | wc -l #to count no of snps
 bcftools view -H ERR5743893_indels.vcf | wc -l #to count no of indels
 bcftools view -H ERR5743893.vcf.gz | wc -l #to count no of variants
 
+______________________________________________________________________________________________________________________
+
+conda create --name nextflow nextflow
+
+conda activate nextflow
+
 
 
 
