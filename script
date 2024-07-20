@@ -48,9 +48,80 @@ bcftools view -H ERR5743893.vcf.gz | wc -l #to count no of variants
 
 ______________________________________________________________________________________________________________________
 
-conda create --name nextflow nextflow
+conda create --name nextflow nextflow #used to both create a new conda environment & install the Nextflow within that environment
 
-conda activate nextflow
+conda activate nextflow #this is how to activate nextflow
+
+conda activate MOOC
+
+nano samples.txt
+
+#copy paste the below European Nucleotide Archive (ENA) accessions
+
+ERR5556343
+
+SRR13500958
+
+ERR5743893
+
+ERR5181310
+
+ERR5405022
+
+#save by pressing ctrl + o and exit ctrl + x
+
+nano download.sh #create another file to write script to download the above ENA accession
+
+#copy paste the below
+
+#!/bin/bash
+
+for i in $(cat samples.txt); do
+    echo "processing $i"
+    fastq-dump --split-files $i
+done
+
+#save by pressing ctrl + o and exit ctrl + x
+
+./download.sh #run the bash script
+
+gzip *.fastq #zip all the downloaded samples 
+
+mkdir data #create a directory
+
+mv *.fastq.gz data #to move zipped file to data directory
+
+# viralrecon requires a CSV file containing the sample names and location of the fastq files input
+
+#Viralrecon is a Nextflow pipeline designed for the analysis of viral sequencing data, providing tools and processes to handle a range of tasks involved in viral sequence analysis.
+
+#It is part of the nf-core community, which develops high-quality, reusable, and customizable workflows. 
+
+wget -L https://raw.githubusercontent.com/nf-core/viralrecon/master/bin/fastq_dir_to_samplesheet.py #download the Python script that has to generate the samplesheet automatically
+
+python3 fastq_dir_to_samplesheet.py data samplesheet.csv -r1 _1.fastq.gz -r2 _2.fastq.gz 
+
+#commanding python 3 to run the script and find fastq files in data director, give output as mentioned followed by option specifies  that the script should look for files ending with the forward read files and then reverse read files
+
+conda activate nextflow 
+
+nextflow run nf-core/viralrecon -profile conda \
+--max_memory '7.GB' --max_cpus 4 \
+--input samplesheet.csv \
+--outdir results/viralrecon \
+--protocol amplicon \
+--genome 'MN908947.3' \
+--primer_set artic \
+--primer_set_version 3 \
+--skip_kraken2 \
+--skip_assembly \
+--skip_pangolin \
+--skip_nextclade \
+--skip_asciigenome \
+--platform illumina \
+-resume
+
+
 
 
 
